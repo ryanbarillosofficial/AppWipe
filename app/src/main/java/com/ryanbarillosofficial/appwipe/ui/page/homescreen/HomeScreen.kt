@@ -2,6 +2,8 @@ package com.ryanbarillosofficial.appwipe.ui.page.homescreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import com.ryanbarillosofficial.appwipe.R
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+//        Spacer(modifier = Modifier.height(32.dp))
         HomeText(0)
         NavigationCardButton(modifier = Modifier.padding(16.dp))
     }
