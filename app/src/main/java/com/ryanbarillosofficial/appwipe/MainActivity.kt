@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.ryanbarillosofficial.appwipe.ui.component.AppWipeTopAppBar
 import com.ryanbarillosofficial.appwipe.ui.modifierWithPaddingOnStatusAndNavigationBars
 import com.ryanbarillosofficial.appwipe.ui.page.homescreen.HomeScreen
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
@@ -19,9 +20,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppWipeTheme {
-                Scaffold(modifier = modifierWithPaddingOnStatusAndNavigationBars.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    topBar = {
+                        AppWipeTopAppBar()
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     AppWipeApp(
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = modifierWithPaddingOnStatusAndNavigationBars.padding(innerPadding)
+                            .fillMaxSize()
                     )
                 }
             }

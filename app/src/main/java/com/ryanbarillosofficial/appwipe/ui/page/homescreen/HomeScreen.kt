@@ -2,9 +2,9 @@ package com.ryanbarillosofficial.appwipe.ui.page.homescreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.ryanbarillosofficial.appwipe.R
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,14 +18,16 @@ import androidx.compose.ui.unit.sp
 import com.ryanbarillosofficial.appwipe.ui.component.NavigationCardButton
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
+const val placeholderInt: Int = 0
+
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = modifier.verticalScroll(rememberScrollState())
     ) {
 //        Spacer(modifier = Modifier.height(32.dp))
-        HomeText(0)
+        HomeText(placeholderInt)
         NavigationCardButton(modifier = Modifier.padding(16.dp))
     }
 
@@ -58,5 +60,25 @@ fun HomeText(countOfAppsBlocked: Int) {
 fun HomeScreenPreview() {
     AppWipeTheme {
         HomeScreen()
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    device = "spec:width=720dp,height=480dp,dpi=240"
+)
+@Composable()
+fun HomeScreenLandscapePreview() {
+    AppWipeTheme {
+        HomeScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable()
+fun HomeTextPreview() {
+    AppWipeTheme {
+        HomeText(5)
     }
 }
