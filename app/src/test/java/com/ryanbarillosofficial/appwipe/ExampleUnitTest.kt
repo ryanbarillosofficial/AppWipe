@@ -1,4 +1,4 @@
-package com.ryanbarillos.appwipe
+package com.ryanbarillosofficial.appwipe
 
 import org.junit.Test
 

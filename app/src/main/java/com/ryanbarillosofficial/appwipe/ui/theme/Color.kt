@@ -1,4 +1,4 @@
-package com.ryanbarillos.appwipe.ui.theme
+package com.ryanbarillosofficial.appwipe.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

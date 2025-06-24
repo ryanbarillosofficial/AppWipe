@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "App Wipe"
+rootProject.name = "AppWipe"
 include(":app")
+ 
