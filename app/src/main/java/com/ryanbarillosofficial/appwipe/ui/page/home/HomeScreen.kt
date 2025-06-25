@@ -1,13 +1,15 @@
-package com.ryanbarillosofficial.appwipe.ui.page.homescreen
+package com.ryanbarillosofficial.appwipe.ui.page.home
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.ryanbarillosofficial.appwipe.R
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,13 +17,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ryanbarillosofficial.appwipe.ui.component.NavigationCardButton
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
 const val placeholderInt: Int = 0
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel = viewModel()
+) {
+    val homeUiState by homeViewModel.uiState.collectAsState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.verticalScroll(rememberScrollState())
@@ -30,7 +37,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         HomeText(placeholderInt)
         NavigationCardButton(modifier = Modifier.padding(16.dp))
     }
-
 }
 
 @Composable
@@ -44,7 +50,7 @@ fun HomeText(countOfAppsBlocked: Int) {
         )
     } else {
         Text(
-            text = stringResource(R.string.no_apps_blocked),
+            text = stringResource(R.string.no_apps_blocked_message),
             fontSize = 30.sp,
             lineHeight = 50.sp,
             textAlign = TextAlign.Center
@@ -54,7 +60,6 @@ fun HomeText(countOfAppsBlocked: Int) {
 
 @Preview(
     showBackground = true,
-    showSystemUi = true,
     )
 @Composable()
 fun HomeScreenPreview() {
@@ -65,13 +70,12 @@ fun HomeScreenPreview() {
 
 @Preview(
     showBackground = true,
-    showSystemUi = true,
-    device = "spec:width=720dp,height=480dp,dpi=240"
+    device = "spec:width=720dp,height=360dp,dpi=240"
 )
 @Composable()
 fun HomeScreenLandscapePreview() {
     AppWipeTheme {
-        HomeScreen()
+        HomeScreen(modifier = Modifier.fillMaxSize())
     }
 }
 
