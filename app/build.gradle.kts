@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    // Kotlin serialization plugin for type safe routes and navigation arguments
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -40,7 +43,20 @@ android {
 }
 
 dependencies {
+//    // Coroutines
+//    implementation(libs.kotlinx.coroutines.android)
+//    // Room Database
+//    ksp(libs.room.compiler)
+//    implementation(libs.room.runtime)
+//    implementation(libs.room.ktx)
 
+    // Navigation Compose
+//    implementation(libs.navigation.compose)
+//    implementation(libs.navigation.fragment)
+//    implementation(libs.navigation.ui)
+    // Navigation
+    implementation(libs.navigation.compose)
+    // Everything else
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

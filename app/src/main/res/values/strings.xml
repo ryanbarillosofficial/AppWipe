@@ -5,4 +5,6 @@
     <string name="default_title_text">Test Title</string>
     <string name="default_description_text">This is a sample description of this Card Button.</string>
     <string name="tap_for_more_info">Tap for more info.</string>
+    <string name="pick_apps_title">Pick Apps</string>
+    <string name="pick_apps_description">Select which apps to be blocked.</string>
 </resources>

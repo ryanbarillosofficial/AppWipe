@@ -18,13 +18,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.ui.component.NavigationCardButton
+import com.ryanbarillosofficial.appwipe.ui.navigation.PageDestination
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
 const val placeholderInt: Int = 0
 
 @Composable
-fun HomeScreen(
+fun Home(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = viewModel()
 ) {
@@ -35,6 +39,13 @@ fun HomeScreen(
     ) {
 //        Spacer(modifier = Modifier.height(32.dp))
         HomeText(placeholderInt)
+        // App Selection Button
+        NavigationCardButton(
+            titleText = stringResource(R.string.pick_apps_title),
+            descriptionText = stringResource(R.string.pick_apps_description),
+            onClick = { navController.navigate(PageDestination.AppSelection.route) },
+            modifier = Modifier.padding(16.dp)
+        )
         NavigationCardButton(modifier = Modifier.padding(16.dp))
     }
 }
@@ -64,7 +75,7 @@ fun HomeText(countOfAppsBlocked: Int) {
 @Composable()
 fun HomeScreenPreview() {
     AppWipeTheme {
-        HomeScreen()
+        Home(navController = rememberNavController())
     }
 }
 
@@ -75,7 +86,10 @@ fun HomeScreenPreview() {
 @Composable()
 fun HomeScreenLandscapePreview() {
     AppWipeTheme {
-        HomeScreen(modifier = Modifier.fillMaxSize())
+        Home(
+            modifier = Modifier.fillMaxSize(),
+            navController = rememberNavController()
+        )
     }
 }
 

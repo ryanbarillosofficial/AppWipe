@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,10 +30,18 @@ fun NavigationCardButton(
     modifier: Modifier = Modifier,
     titleText: String = stringResource(R.string.default_title_text),
     descriptionText: String = stringResource(R.string.default_description_text),
-    onClick: () -> Unit = { },
+    onClick: () -> Unit = {},
 ) {
-    Card(modifier = modifier) {
-        Row(modifier = Modifier.padding(16.dp)) {
+    // Card can be clickable
+    // See here: https://developer.android.com/develop/ui/compose/components/card#advanced
+    Card(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
+        ) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = null,
