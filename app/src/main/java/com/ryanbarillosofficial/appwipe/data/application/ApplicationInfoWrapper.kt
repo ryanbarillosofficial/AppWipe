@@ -1,9 +1,15 @@
 package com.ryanbarillosofficial.appwipe.data.application
-import android.content.pm.ApplicationInfo
 
-// Wrapper to make ApplicationInfo more UI-friendly or add properties
+import androidx.compose.ui.graphics.ImageBitmap
+
 data class ApplicationInfoWrapper(
-    val appInfo: ApplicationInfo,
-    val displayName: String
-    // You could add other processed info here, like isSelected, icon Drawable, etc.
-)
+    val label: String,
+    val icon: ImageBitmap,
+    val packageName: String,
+    val isSystemApp: Boolean,
+    val isSelected: Boolean = false,
+
+) {
+    fun toAppInfo(): AppInfo = AppInfo(label = label, packageName = packageName)
+    fun toggleIsSelected(): ApplicationInfoWrapper = this.copy(isSelected = !this.isSelected)
+}

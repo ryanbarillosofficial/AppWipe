@@ -2,9 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    // For use by Room database
     alias(libs.plugins.ksp)
     // Kotlin serialization plugin for type safe routes and navigation arguments
-    kotlin("plugin.serialization") version "2.0.21"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -13,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ryanbarillosofficial.appwipe"
-        minSdk = 35
+        minSdk = 32
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -43,19 +44,15 @@ android {
 }
 
 dependencies {
-//    // Coroutines
-//    implementation(libs.kotlinx.coroutines.android)
-//    // Room Database
+    // Room Database
 //    ksp(libs.room.compiler)
 //    implementation(libs.room.runtime)
 //    implementation(libs.room.ktx)
 
     // Navigation Compose
-//    implementation(libs.navigation.compose)
-//    implementation(libs.navigation.fragment)
-//    implementation(libs.navigation.ui)
-    // Navigation
     implementation(libs.navigation.compose)
+    // To display drawables directly to compose
+//    implementation("com.google.accompanist:accompanist-drawablepainter")
     // Everything else
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
