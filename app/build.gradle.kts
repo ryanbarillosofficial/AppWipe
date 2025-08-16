@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ryanbarillosofficial.appwipe"
-        minSdk = 35
+        minSdk = 32
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -56,6 +56,8 @@ dependencies {
 //    implementation(libs.navigation.ui)
     // Navigation
     implementation(libs.navigation.compose)
+    // To display drawables directly to compose
+//    implementation("com.google.accompanist:accompanist-drawablepainter")
     // Everything else
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

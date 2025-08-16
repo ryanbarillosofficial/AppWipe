@@ -11,6 +11,7 @@ activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 lifecycleViewmodelCompose = "2.6.1"
 # For Room Databases
+# ksp-2.2.0-2.0.2 is too new for kotlin-2.0.21. Please upgrade kotlin-gradle-plugin to 2.2.0.
 ksp = "2.2.0-2.0.2"
 room = "2.7.2"
 # For navigation

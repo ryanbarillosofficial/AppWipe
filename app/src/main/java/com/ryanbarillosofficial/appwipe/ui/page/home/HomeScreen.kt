@@ -21,13 +21,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.ui.component.NavigationCardButton
-import com.ryanbarillosofficial.appwipe.ui.navigation.PageDestination
+import com.ryanbarillosofficial.appwipe.ui.navigation.ScreenRoute
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
 const val placeholderInt: Int = 0
 
 @Composable
-fun Home(
+fun HomeScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = viewModel()
@@ -35,15 +35,16 @@ fun Home(
     val homeUiState by homeViewModel.uiState.collectAsState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.verticalScroll(rememberScrollState())
+//        modifier = modifier.verticalScroll(rememberScrollState())
+        modifier = modifier
     ) {
 //        Spacer(modifier = Modifier.height(32.dp))
         HomeText(placeholderInt)
-        // App Selection Button
+        // Pick Apps Button
         NavigationCardButton(
-            titleText = stringResource(R.string.pick_apps_title),
-            descriptionText = stringResource(R.string.pick_apps_description),
-            onClick = { navController.navigate(PageDestination.AppSelection.route) },
+            titleText = stringResource(R.string.select_apps_title),
+            descriptionText = stringResource(R.string.select_apps_description),
+            onClick = { navController.navigate(ScreenRoute.SelectApps.route) },
             modifier = Modifier.padding(16.dp)
         )
         NavigationCardButton(modifier = Modifier.padding(16.dp))
@@ -75,7 +76,7 @@ fun HomeText(countOfAppsBlocked: Int) {
 @Composable()
 fun HomeScreenPreview() {
     AppWipeTheme {
-        Home(navController = rememberNavController())
+        HomeScreen(navController = rememberNavController())
     }
 }
 
@@ -86,7 +87,7 @@ fun HomeScreenPreview() {
 @Composable()
 fun HomeScreenLandscapePreview() {
     AppWipeTheme {
-        Home(
+        HomeScreen(
             modifier = Modifier.fillMaxSize(),
             navController = rememberNavController()
         )

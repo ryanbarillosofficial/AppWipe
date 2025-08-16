@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
  * efficiency of development
  */
 
-val modifierWithPaddingOnStatusAndNavigationBars: Modifier = Modifier
+val modifierWithPaddingOnSidesAndBottom: Modifier = Modifier
     .navigationBarsPadding()
-    .statusBarsPadding()
+//    .statusBarsPadding()
     .safeGesturesPadding()
 
 
