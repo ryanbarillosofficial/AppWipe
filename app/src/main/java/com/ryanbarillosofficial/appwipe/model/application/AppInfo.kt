@@ -1,4 +1,4 @@
-package com.ryanbarillosofficial.appwipe.data.application
+package com.ryanbarillosofficial.appwipe.model.application
 
 data class AppInfo(
     val label: String,

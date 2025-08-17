@@ -1,7 +1,7 @@
 package com.ryanbarillosofficial.appwipe.ui.page.select_apps
 
 import android.content.Context
-import androidx.compose.foundation.Image
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,34 +9,33 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ryanbarillosofficial.appwipe.R
+import com.ryanbarillosofficial.appwipe.ui.components.AppWipeTopAppBar
 import com.ryanbarillosofficial.appwipe.ui.paddingGap
+import com.ryanbarillosofficial.appwipe.ui.page.select_apps.components.ApplicationInfoCard
 import kotlinx.coroutines.launch
 
 /**
@@ -45,29 +44,44 @@ import kotlinx.coroutines.launch
  * https://tomas-repcik.medium.com/listing-all-installed-apps-in-android-13-via-packagemanager-3b04771dc73
  */
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAppsScreen(
-    modifier: Modifier = Modifier,
     context: Context,
-    onTitlesChange: (Any, Any) -> Unit = { _, _ -> },
     viewModel: SelectAppsViewModel = viewModel {
         SelectAppsViewModel(
             packageManager = context.packageManager,
             packageName = context.packageName
         )
-    }
+    },
+    navigateForward: () -> Unit = { },
+    navigateUp: () -> Unit = { },
 ) {
     // View Model
     val uiState by viewModel.uiState.collectAsState()
     val selectedAppsCount = uiState.selectedApps.size
+
+    // Top bar scroll state
     val screenTitle: Any = if (selectedAppsCount > 0) {
         "$selectedAppsCount selected"
     } else {
         R.string.select_apps_title
     }
+    // Top App Bar State
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    LaunchedEffect(screenTitle) {
-        onTitlesChange(screenTitle, screenTitle)
+    // Navigation state
+    val actualNavigateUp = if (selectedAppsCount > 0) {
+        { viewModel.clearSelectedApps() }
+    } else {
+        navigateUp
+    }
+    // Handle system back press
+    // BackHandler should be enabled only when there's a custom action to perform
+    // or if you want to conditionally prevent back navigation.
+    // In this case, it's always enabled to apply the custom logic.
+    BackHandler(enabled = true) { // Or conditionally enable: enabled = selectedAppsCount > 0
+        actualNavigateUp()
     }
 
 //    val lastSelectedApp = when (selectedAppsCount) {
@@ -78,128 +92,82 @@ fun SelectAppsScreen(
     val coroutineScope = rememberCoroutineScope()
 
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxWidth()
-    ) {
-//        Spacer(modifier = Modifier.height(paddingGap))
-//        Text(text = "Last Selected App: $lastSelectedApp")
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(text = "Show System Apps")
-            Spacer(modifier = Modifier.width(8.dp))
-            Switch(
-                checked = uiState.showSystemApps,
-                onCheckedChange = {
-                    viewModel.showSystemApps()
-                    coroutineScope.launch {
-                        listState.scrollToItem(index = 0)
-                    }
-                }
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            AppWipeTopAppBar(
+                collapsedTitle = screenTitle,
+                scrollBehavior = scrollBehavior,
+                canNavigateBack = true,
+                navigateUp = actualNavigateUp
             )
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-
-        if (uiState.isLoading) {
-            Text(text = "Please Wait...")
-        } else {
-            // Scroll to top when showSystemApps changes
-
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .weight(1f)
-            ) {
-                itemsIndexed(items = uiState.installedApps) { index, applicationInfo ->
-                    val topPadding = if (index > 0) paddingGap else 0.dp
-                    ApplicationInfoCard(
-                        icon = applicationInfo.icon,
-                        label = applicationInfo.label,
-                        isSelected = applicationInfo.isSelected,
-                        isSystemApp = applicationInfo.isSystemApp,
-                        onClick = {
-                            viewModel.selectApp(applicationInfo)
-                        },
-                        modifier = Modifier.padding(top = topPadding)
-                    )
-                }
+        },
+        floatingActionButton = {
+            if (selectedAppsCount > 0) {
+                ExtendedFloatingActionButton(
+                    onClick = navigateForward,
+                    icon = { Icon(Icons.Filled.Add, "Add") },
+                    text = { Text(text = "Done") },
+                )
             }
         }
-    }
-}
-
-@Composable
-fun SelectAppsMoreOptionsRow(modifier: Modifier = Modifier) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-    }
-}
-
-@Composable
-fun ApplicationInfoCard(
-    icon: ImageBitmap,
-    label: String,
-    isSelected: Boolean,
-    isSystemApp: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = { },
-    ) {
-    val cardColor: CardColors = when (isSelected) {
-        false -> CardDefaults.cardColors()
-        true -> CardDefaults.cardColors(
-            containerColor = Color.hsl(
-                hue = 220F,
-                saturation = 1F,
-                lightness = 0.6F
-            ),
-            contentColor = Color.White
-        )
-
-    }
-    val textStyle = when(isSelected) {
-        false -> MaterialTheme.typography.bodyLarge
-        true -> MaterialTheme.typography.bodyLarge.copy(
-            shadow = Shadow(
-                color = Color.Black.copy(alpha = 0.5f), // Shadow color with some transparency
-//                offset = Offset(x = 2f, y = 2f),    // Offset of the shadow
-                blurRadius = 4f                     // Blur radius for a softer shadow
-            )
-        )
-    }
-    Card(
-        onClick = onClick,
-        modifier = modifier,
-        colors = cardColor
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+    )
+    { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(paddingGap),
             modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
+                .padding(innerPadding)
+                .padding(paddingGap)
         ) {
-            Image(
-                bitmap = icon,
-                contentDescription = "Icon of $label",
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = label,
-                style = textStyle,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-            )
+//        Spacer(modifier = Modifier.height(paddingGap))
+//        Text(text = "Last Selected App: $lastSelectedApp")
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(text = "Show System Apps")
+//                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = uiState.showSystemApps,
+                    onCheckedChange = {
+                        viewModel.showSystemApps()
+                        coroutineScope.launch {
+                            listState.scrollToItem(index = 0)
+                        }
+                    }
+                )
+            }
+            if (uiState.isLoading) {
+                Text(text = "Please Wait...")
+            } else {
+                // Scroll to top when showSystemApps changes
+
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(paddingGap)
+                ) {
+                    items(items = uiState.installedApps) { applicationInfo ->
+                        ApplicationInfoCard(
+                            icon = applicationInfo.icon,
+                            label = applicationInfo.label,
+                            isSelected = applicationInfo.isSelected,
+                            onClick = {
+                                viewModel.selectApp(applicationInfo)
+                            }
+                        )
+                    }
+                }
+            }
+            // Aim for this to make the last app selectable, not busied by the FAB
+            Spacer(modifier = Modifier.height(paddingGap))
         }
     }
 }

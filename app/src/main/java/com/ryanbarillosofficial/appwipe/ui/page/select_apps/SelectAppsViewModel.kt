@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ryanbarillosofficial.appwipe.data.application.ApplicationInfoWrapper
+import com.ryanbarillosofficial.appwipe.model.application.ApplicationInfoWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,8 +78,6 @@ class SelectAppsViewModel(
     // Add the selected app from screen to the view model list
     fun selectApp(applicationInfo: ApplicationInfoWrapper) {
         val app = applicationInfo.toAppInfo()
-        val newIsSelectedValue = !applicationInfo.isSelected
-
 
         _uiState.update { currentState ->
             // Add or remove the app from the list
@@ -109,8 +107,17 @@ class SelectAppsViewModel(
         }
     }
     fun clearSelectedApps() {
+
         _uiState.update { currentState ->
-            currentState.copy(selectedApps = emptySet())
+            // Update the installed apps list to reflect that the current app has been selected (for use by the UI)
+            val updatedInstalledApps = currentState.installedApps.map { application ->
+                if (application.isSelected) {
+                    application.toggleIsSelected()
+                } else {
+                    application
+                }
+            }
+            currentState.copy(selectedApps = emptySet(), installedApps = updatedInstalledApps)
         }
     }
 }

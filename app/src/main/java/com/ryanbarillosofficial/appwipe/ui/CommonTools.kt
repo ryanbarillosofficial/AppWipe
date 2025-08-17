@@ -1,9 +1,7 @@
 package com.ryanbarillosofficial.appwipe.ui
 
-import androidx.compose.foundation.layout.R
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.safeGesturesPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -19,7 +17,7 @@ val modifierWithPaddingOnSidesAndBottom: Modifier = Modifier
 //    .statusBarsPadding()
     .safeGesturesPadding()
 
-val paddingGap: Dp = 16.dp
+val paddingGap: Dp = 8.dp
 
 
 

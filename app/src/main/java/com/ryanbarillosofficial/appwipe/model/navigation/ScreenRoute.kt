@@ -1,7 +1,6 @@
-package com.ryanbarillosofficial.appwipe.ui.navigation
+package com.ryanbarillosofficial.appwipe.model.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
 import com.ryanbarillosofficial.appwipe.R
 
 sealed class ScreenRoute(
@@ -15,6 +14,10 @@ sealed class ScreenRoute(
     object SelectApps: ScreenRoute(
         route = "app_selection",
         title = R.string.select_apps_title,
+    )
+    object Review: ScreenRoute(
+        route = "review",
+        title = R.string.review_title,
     )
     object ViewList: ScreenRoute(
         route = "view_list",
@@ -31,6 +34,8 @@ sealed class ScreenRoute(
             return when (route) {
                 Home.route -> Home
                 SelectApps.route -> SelectApps
+                Review.route -> Review
+                ViewList.route -> ViewList
                 else -> Home
 
             }

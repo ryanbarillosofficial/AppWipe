@@ -1,4 +1,4 @@
-package com.ryanbarillosofficial.appwipe.data.application
+package com.ryanbarillosofficial.appwipe.model.application
 
 import androidx.compose.ui.graphics.ImageBitmap
 

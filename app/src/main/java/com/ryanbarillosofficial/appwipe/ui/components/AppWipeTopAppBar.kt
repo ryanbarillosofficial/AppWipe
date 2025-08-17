@@ -1,13 +1,14 @@
-package com.ryanbarillosofficial.appwipe.ui.component
+package com.ryanbarillosofficial.appwipe.ui.components
 
 import android.annotation.SuppressLint
-import android.util.Log
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ryanbarillosofficial.appwipe.R
+import com.ryanbarillosofficial.appwipe.ui.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
 
@@ -40,7 +42,7 @@ import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 @Composable
 fun AppWipeTopAppBar(
     collapsedTitle: Any,
-    expandedTitle: Any?,
+    expandedTitle: Any? = null,
     canNavigateBack: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
     navigateUp: () -> Unit = { },
@@ -52,7 +54,6 @@ fun AppWipeTopAppBar(
     // The threshold (e.g., 0.5f) can be adjusted based on when you want the title to switch.
     // For LargeTopAppBar, the title often disappears/changes as it collapses, so switching
     // mid-way or based on when the large title area is mostly gone makes sense.
-
     val showCollapsedTitle by remember(scrollBehavior.state.collapsedFraction) {
         derivedStateOf { scrollBehavior.state.collapsedFraction > 0.5f }
     }
@@ -69,13 +70,18 @@ fun AppWipeTopAppBar(
     val actualExpandedTitle = when (expandedTitle) {
         is String -> expandedTitle
         is Int -> stringResource(id = expandedTitle)
-        null -> collapsedTitle
+        null -> actualCollapsedTitle
         else -> throw IllegalArgumentException("expandedTitle must be a String or @StringRes Int")
     }
     // Finally, the actual title to display
     val actualTitle = if (showCollapsedTitle) actualCollapsedTitle else actualExpandedTitle
+    val style = if (showCollapsedTitle) MaterialTheme.typography.titleLarge else MaterialTheme.typography.displaySmall
     LargeTopAppBar(
-        title = { Text(text = actualTitle.toString()) },
+        title = { Text(
+            text = actualTitle,
+            modifier = Modifier.padding(paddingGap),
+            style = style,
+        )},
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
