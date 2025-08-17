@@ -4,11 +4,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.ui.navigation.ScreenRoute
 import com.ryanbarillosofficial.appwipe.ui.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.home.HomeScreen
