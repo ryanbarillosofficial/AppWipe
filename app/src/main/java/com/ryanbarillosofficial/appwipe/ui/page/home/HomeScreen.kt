@@ -2,6 +2,7 @@ package com.ryanbarillosofficial.appwipe.ui.page.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -25,9 +26,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.ui.components.NavigationCardButton
-import com.ryanbarillosofficial.appwipe.model.navigation.ScreenRoute
+import com.ryanbarillosofficial.appwipe.data.local.model.navigation.ScreenRoute
 import com.ryanbarillosofficial.appwipe.ui.components.AppWipeTopAppBar
-import com.ryanbarillosofficial.appwipe.ui.paddingGap
+import com.ryanbarillosofficial.appwipe.ui.components.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.home.components.HomeText
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
@@ -54,7 +55,6 @@ fun HomeScreen(
             AppWipeTopAppBar(
                 collapsedTitle = screenTitle,
                 scrollBehavior = scrollBehavior,
-                canNavigateBack = navController.previousBackStackEntry != null,
             )
         }
     ) { innerPadding ->
@@ -62,6 +62,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(paddingGap * 2),
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
                 .padding(paddingGap)
                 .verticalScroll(state = columnScrollState)

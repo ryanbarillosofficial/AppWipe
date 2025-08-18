@@ -2,6 +2,7 @@ package com.ryanbarillosofficial.appwipe.ui.page.select_apps
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +15,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -25,35 +31,37 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ryanbarillosofficial.appwipe.R
 import com.ryanbarillosofficial.appwipe.ui.components.AppWipeTopAppBar
-import com.ryanbarillosofficial.appwipe.ui.paddingGap
+import com.ryanbarillosofficial.appwipe.ui.components.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.components.ApplicationInfoCard
 import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
 
 /**
  * Reference(s) needed to complete this page:
  * https://developer.android.com/reference/android/content/pm/PackageManager
  * https://tomas-repcik.medium.com/listing-all-installed-apps-in-android-13-via-packagemanager-3b04771dc73
+ * e
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAppsScreen(
+    @StringRes routeTitle: Int,
     context: Context,
-    viewModel: SelectAppsViewModel = viewModel {
-        SelectAppsViewModel(
-            packageManager = context.packageManager,
-            packageName = context.packageName
-        )
-    },
+    viewModel: SelectAppsViewModel = hiltViewModel(),
     navigateForward: () -> Unit = { },
     navigateUp: () -> Unit = { },
 ) {
@@ -65,13 +73,13 @@ fun SelectAppsScreen(
     val screenTitle: Any = if (selectedAppsCount > 0) {
         "$selectedAppsCount selected"
     } else {
-        R.string.select_apps_title
+        routeTitle
     }
     // Top App Bar State
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     // Navigation state
-    val actualNavigateUp = if (selectedAppsCount > 0) {
+    val actualNavigateUp: () -> Unit = if (selectedAppsCount > 0) {
         { viewModel.clearSelectedApps() }
     } else {
         navigateUp
@@ -84,10 +92,14 @@ fun SelectAppsScreen(
         actualNavigateUp()
     }
 
-//    val lastSelectedApp = when (selectedAppsCount) {
-//        0 -> "None"
-//        else ->  selectAppsUiState.selectedApps.last().label
-//    }
+    // Dropdown Menu for the top bar
+    var showDropdownMenu by remember { mutableStateOf<Boolean>(false) }
+    val systemAppsToggleText = if (uiState.showSystemApps) {
+        stringResource(R.string.hide_system_apps)
+    } else {
+        stringResource(R.string.show_system_apps)
+    }
+
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -98,16 +110,44 @@ fun SelectAppsScreen(
             AppWipeTopAppBar(
                 collapsedTitle = screenTitle,
                 scrollBehavior = scrollBehavior,
-                canNavigateBack = true,
-                navigateUp = actualNavigateUp
+                navigateUp = actualNavigateUp,
+                actions = {
+                    IconButton(onClick = {showDropdownMenu = !showDropdownMenu }) {
+                        Icon(
+                            imageVector = Icons.Filled.MoreVert,
+                            contentDescription = stringResource(R.string.more_options)
+                        )
+                        DropdownMenu(
+                            expanded = showDropdownMenu,
+                            onDismissRequest = { showDropdownMenu = false },
+                            shape = RoundedCornerShape(16.dp),
+
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(text = systemAppsToggleText)},
+                                onClick = {
+                                    viewModel.showSystemApps()
+                                    coroutineScope.launch {
+                                        listState.scrollToItem(index = 0)
+                                    }
+                                    showDropdownMenu = false
+                                }
+
+                            )
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {
             if (selectedAppsCount > 0) {
                 ExtendedFloatingActionButton(
-                    onClick = navigateForward,
-                    icon = { Icon(Icons.Filled.Add, "Add") },
-                    text = { Text(text = "Done") },
+                    onClick = { viewModel.navigateForward(navigateForward) },
+                    icon = { Icon(
+                        imageVector = Icons.Filled.RateReview,
+                        contentDescription = stringResource(R.string.review_description)
+                    ) },
+                    text = { Text(stringResource(R.string.review_title)) },
                 )
             }
         }
@@ -122,30 +162,14 @@ fun SelectAppsScreen(
         ) {
 //        Spacer(modifier = Modifier.height(paddingGap))
 //        Text(text = "Last Selected App: $lastSelectedApp")
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-            ) {
-                Text(text = "Show System Apps")
-//                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = uiState.showSystemApps,
-                    onCheckedChange = {
-                        viewModel.showSystemApps()
-                        coroutineScope.launch {
-                            listState.scrollToItem(index = 0)
-                        }
-                    }
-                )
-            }
+//            Text(
+//                text = "More Options",
+//                modifier = Modifier.align(Alignment.Start)
+//            )
             if (uiState.isLoading) {
                 Text(text = "Please Wait...")
             } else {
                 // Scroll to top when showSystemApps changes
-
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
@@ -167,7 +191,7 @@ fun SelectAppsScreen(
                 }
             }
             // Aim for this to make the last app selectable, not busied by the FAB
-            Spacer(modifier = Modifier.height(paddingGap))
+//            Spacer(modifier = Modifier.height(paddingGap))
         }
     }
 }

@@ -2,20 +2,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    // For use by Room database
-    alias(libs.plugins.ksp)
-    // Kotlin serialization plugin for type safe routes and navigation arguments
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)                     // For use by Room database
+    alias(libs.plugins.kotlin.serialization)    // Kotlin serialization plugin for type safe routes and navigation arguments
+    alias(libs.plugins.hilt)                    // Hilt for dependency injection
 }
 
 android {
     namespace = "com.ryanbarillosofficial.appwipe"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.ryanbarillosofficial.appwipe"
         minSdk = 32
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -43,16 +42,33 @@ android {
     }
 }
 
+// See here
+// https://dagger.dev/hilt/gradle-setup.html
+hilt {
+    enableAggregatingTask = true
+}
+
 dependencies {
     // Room Database
-//    ksp(libs.room.compiler)
-//    implementation(libs.room.runtime)
-//    implementation(libs.room.ktx)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     // Navigation Compose
-    implementation(libs.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
+
     // To display drawables directly to compose
-//    implementation("com.google.accompanist:accompanist-drawablepainter")
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
+    // Hilt for dependency injection
+    implementation(libs.google.dagger.hilt.android)
+    ksp(libs.google.dagger.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    // Datastore Preferences
+    implementation(libs.androidx.datastore.preferences)
+
     // Everything else
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

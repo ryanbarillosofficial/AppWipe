@@ -1,4 +1,4 @@
-package com.ryanbarillosofficial.appwipe.model.navigation
+package com.ryanbarillosofficial.appwipe.data.local.model.navigation
 
 import androidx.annotation.StringRes
 import com.ryanbarillosofficial.appwipe.R

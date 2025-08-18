@@ -1,4 +1,4 @@
-package com.ryanbarillosofficial.appwipe.ui
+package com.ryanbarillosofficial.appwipe.ui.components
 
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.safeGesturesPadding
@@ -18,6 +18,10 @@ val modifierWithPaddingOnSidesAndBottom: Modifier = Modifier
     .safeGesturesPadding()
 
 val paddingGap: Dp = 8.dp
+const val NAVIGATION_ANIMATION_DURATION_MILLIS: Int = 700
+
+// OneUI padding for all screens
+//val paddingForAllSides: Dp = 24.dp
 
 
 

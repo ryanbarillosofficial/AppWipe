@@ -1,6 +1,7 @@
 package com.ryanbarillosofficial.appwipe.ui.components
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -19,8 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.ryanbarillosofficial.appwipe.R
-import com.ryanbarillosofficial.appwipe.ui.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 
 
@@ -33,7 +34,6 @@ import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
  * @param expandedTitle The string for the title when the app bar is expanded.
  *                           Accepted data types: String or @StringRes Int
  *                           If null, expandedTitleResId will be used.
- * @param canNavigateBack Whether to display the back navigation icon.
  * @param modifier Optional [Modifier] for theming and styling.
  * @param scrollBehavior The [TopAppBarScrollBehavior] to coordinate scrolling. Essential for this functionality.
  * @param navigateUp Lambda function to be invoked when the navigation icon is clicked.
@@ -43,9 +43,9 @@ import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
 fun AppWipeTopAppBar(
     collapsedTitle: Any,
     expandedTitle: Any? = null,
-    canNavigateBack: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
-    navigateUp: () -> Unit = { },
+    navigateUp: (() -> Unit)? = null,
+    actions: @Composable (RowScope.() -> Unit) = {},
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 
 
@@ -79,11 +79,11 @@ fun AppWipeTopAppBar(
     LargeTopAppBar(
         title = { Text(
             text = actualTitle,
-            modifier = Modifier.padding(paddingGap),
+            modifier = Modifier.padding(8.dp),
             style = style,
         )},
         navigationIcon = {
-            if (canNavigateBack) {
+            if (navigateUp != null) {
                 IconButton(onClick = navigateUp) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -92,6 +92,7 @@ fun AppWipeTopAppBar(
                 }
             }
         },
+        actions = actions,
         scrollBehavior = scrollBehavior,
         modifier = modifier
     )
@@ -106,8 +107,6 @@ fun AppWipeTopAppBarPreview() {
             expandedTitle = "Expanded Title",
             collapsedTitle = "Collapsed Title",
             scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
-            canNavigateBack = false
-
         )
     }
 }

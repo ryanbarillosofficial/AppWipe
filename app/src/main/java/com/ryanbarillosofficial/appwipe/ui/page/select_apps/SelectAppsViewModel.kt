@@ -1,12 +1,14 @@
 package com.ryanbarillosofficial.appwipe.ui.page.select_apps
 
+import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.core.graphics.drawable.toBitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ryanbarillosofficial.appwipe.model.application.ApplicationInfoWrapper
+import com.ryanbarillosofficial.appwipe.data.local.repository.SelectAppsRepository
+import com.ryanbarillosofficial.appwipe.data.local.model.application.ApplicationInfoWrapper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,11 +16,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SelectAppsViewModel(
-    val packageManager: PackageManager,
-    val packageName: String
+@HiltViewModel
+class SelectAppsViewModel @Inject constructor(
+    val selectedAppsRepository: SelectAppsRepository,
+    app: Application,
     ): ViewModel() {
+
+    // Some important stuffs
+    private val packageManager = app.packageManager
+    private val packageName = app.packageName
 
 
     // StateFlow for UI state
@@ -54,8 +62,7 @@ class SelectAppsViewModel(
                             label = packageManager.getApplicationLabel(application).toString(),
                             isSystemApp = (application.flags and ApplicationInfo.FLAG_SYSTEM) != 0,
                             icon = packageManager.getApplicationIcon(application)
-                                .toBitmap()
-                                .asImageBitmap()
+//                            icon = packageManager.getApplicationIcon(application).toBitmap().asImageBitmap()
                         )
                     }
                     .sortedBy { appInfo -> appInfo.label.lowercase() }
@@ -76,23 +83,24 @@ class SelectAppsViewModel(
     }
 
     // Add the selected app from screen to the view model list
-    fun selectApp(applicationInfo: ApplicationInfoWrapper) {
-        val app = applicationInfo.toAppInfo()
+    fun selectApp(application: ApplicationInfoWrapper) {
 
         _uiState.update { currentState ->
             // Add or remove the app from the list
-            val updatedSelectedApps = when (currentState.selectedApps.contains(app)) {
-                true -> currentState.selectedApps - app
-                false -> currentState.selectedApps + app
+            val updatedSelectedApps = if (currentState.selectedApps.any({ it.packageName == application.packageName })) {
+                (currentState.selectedApps.filterNot { it.packageName == application.packageName }).toSet()
+            } else {
+                currentState.selectedApps + application
             }
             // Update the installed apps list to reflect that the current app has been selected (for use by the UI)
-            val updatedInstalledApps = currentState.installedApps.map { application ->
-                if (application.packageName == applicationInfo.packageName) {
-                    application.toggleIsSelected()
+            val updatedInstalledApps = currentState.installedApps.map { installedApp ->
+                if (installedApp.packageName == application.packageName) {
+                    installedApp.toggleIsSelected()
                 } else {
-                    application
+                    installedApp
                 }
             }
+            Log.d("SelectAppsViewModel", "Selected Apps: $updatedSelectedApps")
             currentState.copy(selectedApps = updatedSelectedApps, installedApps = updatedInstalledApps)
         }
     }
@@ -119,5 +127,16 @@ class SelectAppsViewModel(
             }
             currentState.copy(selectedApps = emptySet(), installedApps = updatedInstalledApps)
         }
+    }
+
+    /**
+     * HILT REQUIRED:
+     *
+     * Transfer the selectedApps to the repository
+     * for the next screen to use
+     */
+    fun navigateForward(navigateToNextScreen: () -> Unit) {
+        selectedAppsRepository.updateSelectedApps(_uiState.value.selectedApps)
+        navigateToNextScreen()
     }
 }

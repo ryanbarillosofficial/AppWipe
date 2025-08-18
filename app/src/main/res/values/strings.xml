@@ -1,16 +1,26 @@
 <resources>
     <string name="app_name">AppWipe</string>
     <string name="back_button">Back</string>
+    <string name="show_system_apps">Show System Apps</string>
+    <string name="hide_system_apps">Hide System Apps</string>"
     <string name="no_apps_blocked_message">Oh no!\nThere are no apps blocked</string>
     <string name="tap_for_more_info">Tap for more info.</string>
     <string name="home_title">Home</string>
     <string name="select_apps_title">Select Apps</string>
-    <string name="select_apps_description">Select which apps to keep out your system</string>
+    <string name="select_apps_description">Select which apps to keep out your system.</string>
     <string name="review_title">Review</string>
+    <string name="review_description">Review the apps you have selected to keep out your system.</string>
+    <string name="review_user_apps_title">User Apps</string>
+    <string name="review_user_apps_description">The following user apps will be kept out of your system:</string>
+    <string name="review_system_apps_title">System Apps</string>
+    <string name="review_system_apps_description">The following system apps will be kept out of your system:</string>
     <string name="view_list_title">View List</string>
     <string name="view_list_description">View the list of apps you have selected to keep out your system</string>
     <string name="default_title_text">Test Title</string>
     <string name="default_description_text">This is a sample description of this Card Button.</string>
+    <string name="more_options">More Options</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
 
 
 </resources>
