@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
  * Reference(s) needed to complete this page:
  * https://developer.android.com/reference/android/content/pm/PackageManager
  * https://tomas-repcik.medium.com/listing-all-installed-apps-in-android-13-via-packagemanager-3b04771dc73
+ * e
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
