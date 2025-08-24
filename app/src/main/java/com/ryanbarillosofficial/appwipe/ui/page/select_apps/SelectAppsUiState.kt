@@ -6,5 +6,5 @@ data class SelectAppsUiState(
     val selectedApps: Set<ApplicationInfoWrapper> = emptySet(),
     val installedApps: List<ApplicationInfoWrapper> = emptyList(),
     val showSystemApps: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = true
     )

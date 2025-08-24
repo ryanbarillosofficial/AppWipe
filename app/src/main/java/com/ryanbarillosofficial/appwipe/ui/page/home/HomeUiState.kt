@@ -5,5 +5,5 @@ import com.ryanbarillosofficial.appwipe.R
 
 data class HomeUiState(
     val countOfAppsBlocked: Int = 0,
-    @StringRes val splashMessage: Int = R.string.no_apps_blocked_message
+    @param:StringRes val splashMessage: Int = R.string.no_apps_blocked_message
 )

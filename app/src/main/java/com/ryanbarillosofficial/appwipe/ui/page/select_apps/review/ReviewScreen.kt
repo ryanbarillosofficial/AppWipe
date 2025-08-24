@@ -1,5 +1,6 @@
 package com.ryanbarillosofficial.appwipe.ui.page.select_apps.review
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.tween
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.R
 import com.ryanbarillosofficial.appwipe.data.local.model.application.ApplicationInfoWrapper
@@ -63,6 +65,9 @@ fun ReviewScreen(
 
     // navigation states
     val reviewNavController = rememberNavController()
+    val reviewNavBackStackEntry by reviewNavController.currentBackStackEntryAsState()
+    val reviewCurrentDestination = reviewNavBackStackEntry?.destination?.route
+
     val actualNavigateUp: () -> Unit = {
         if (reviewNavController.previousBackStackEntry != null) {
             reviewNavController.popBackStack()
@@ -78,15 +83,16 @@ fun ReviewScreen(
     }
 
     // Floating action button states
-    val fabIcon: ImageVector = if (uiState.listOfSystemApps.isNotEmpty()) {
-        Icons.AutoMirrored.Filled.NavigateNext
+    val isSystemAppsListEmpty = uiState.listOfSystemApps.isEmpty()
+
+    val (fabIcon, fabText) = if (isSystemAppsListEmpty) {
+        Icons.Filled.Check to stringResource(R.string.done)
     } else {
-        Icons.Filled.Check
-    }
-    val fabText: String = if (uiState.listOfSystemApps.isNotEmpty()) {
-        stringResource(R.string.next)
-    } else {
-        stringResource(R.string.done)
+        if (reviewCurrentDestination == ReviewScreenType.System.name) {
+            Icons.Filled.Check to stringResource(R.string.done)
+        } else {
+            Pair(Icons.AutoMirrored.Filled.NavigateNext, stringResource(R.string.next))
+        }
     }
 
 
@@ -102,13 +108,17 @@ fun ReviewScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
-                    if (uiState.listOfSystemApps.isNotEmpty()) {
-                        reviewNavController.navigate(ReviewScreenType.System.name)
-                        coroutineScope.launch {
-                            listState.scrollToItem(index = 0)
-                        }
-                    } else {
+                    if (isSystemAppsListEmpty) {
                         navigateForward()
+                    } else {
+                        if (reviewCurrentDestination == ReviewScreenType.User.name) {
+                            reviewNavController.navigate(ReviewScreenType.System.name)
+                            coroutineScope.launch {
+                                listState.scrollToItem(index = 0)
+                            }
+                        } else {
+                            navigateForward()
+                        }
                     }
                 },
                 icon = {

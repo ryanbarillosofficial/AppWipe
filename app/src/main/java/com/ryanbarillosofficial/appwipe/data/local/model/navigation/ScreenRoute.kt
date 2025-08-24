@@ -5,7 +5,7 @@ import com.ryanbarillosofficial.appwipe.R
 
 sealed class ScreenRoute(
     val route: String,
-    @StringRes val title: Int,
+    @param:StringRes val title: Int,
 ) {
     object Home: ScreenRoute(
         route = "home",

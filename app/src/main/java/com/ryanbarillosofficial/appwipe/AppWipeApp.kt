@@ -70,6 +70,7 @@ fun AppWipeApp(
             ReviewScreen(
                 routeTitle = ScreenRoute.Review.title,
                 navigateUp = { navController.popBackStack() },
+                navigateForward = { navController.popBackStack(ScreenRoute.Home.route, inclusive = false) }
             )
         }
     }

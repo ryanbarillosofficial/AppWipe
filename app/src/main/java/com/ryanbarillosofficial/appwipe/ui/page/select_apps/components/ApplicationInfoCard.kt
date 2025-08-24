@@ -16,9 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
@@ -33,14 +30,6 @@ fun ApplicationInfoCard(
 ) {
     val cardColor: CardColors = when (isSelected) {
         false -> CardDefaults.cardColors()
-//        true -> CardDefaults.cardColors(
-//            containerColor = Color.hsl(
-//                hue = 220F,
-//                saturation = 1F,
-//                lightness = 0.6F
-//            ),
-//            contentColor = Color.White
-//        )
         true -> CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
     }
 

@@ -3,7 +3,7 @@ package com.ryanbarillosofficial.appwipe.ui.page.select_apps
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.util.Log
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ryanbarillosofficial.appwipe.data.local.repository.SelectAppsRepository
@@ -45,7 +45,6 @@ class SelectAppsViewModel @Inject constructor(
     // Using coroutines is recommended, but currently this is my implementation
     private suspend fun fetchInstalledApps() = withContext(Dispatchers.IO) {
         if (_installedApps.isEmpty()) {
-            _uiState.update { currentState -> currentState.copy(isLoading = true) }
             /**
              * The function in a nutshell:
              * - Get all installed apps
@@ -61,8 +60,12 @@ class SelectAppsViewModel @Inject constructor(
                             packageName = application.packageName,
                             label = packageManager.getApplicationLabel(application).toString(),
                             isSystemApp = (application.flags and ApplicationInfo.FLAG_SYSTEM) != 0,
-                            icon = packageManager.getApplicationIcon(application)
-//                            icon = packageManager.getApplicationIcon(application).toBitmap().asImageBitmap()
+                            icon = packageManager.getApplicationIcon(application),
+                            isArchived = if (Build.VERSION.SDK_INT >= 35) {
+                                application.isArchived
+                            } else {
+                                false
+                            }
                         )
                     }
                     .sortedBy { appInfo -> appInfo.label.lowercase() }
@@ -75,8 +78,8 @@ class SelectAppsViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 installedApps = when(currentState.showSystemApps) {
-                    true -> _installedApps
-                    false -> _installedApps.filter { appInfo -> !appInfo.isSystemApp }
+                    true -> _installedApps.filterNot { appInfo -> appInfo.isArchived }
+                    false -> _installedApps.filterNot { appInfo -> appInfo.isSystemApp or appInfo.isArchived }
                 },
                 isLoading = false)
         }
@@ -100,7 +103,6 @@ class SelectAppsViewModel @Inject constructor(
                     installedApp
                 }
             }
-            Log.d("SelectAppsViewModel", "Selected Apps: $updatedSelectedApps")
             currentState.copy(selectedApps = updatedSelectedApps, installedApps = updatedInstalledApps)
         }
     }

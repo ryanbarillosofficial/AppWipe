@@ -5,10 +5,8 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,9 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -41,13 +37,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ryanbarillosofficial.appwipe.R
 import com.ryanbarillosofficial.appwipe.ui.components.AppWipeTopAppBar
 import com.ryanbarillosofficial.appwipe.ui.components.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.components.ApplicationInfoCard
 import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ryanbarillosofficial.appwipe.ui.components.LoadingScreen
 
 /**
  * Reference(s) needed to complete this page:
@@ -76,7 +72,11 @@ fun SelectAppsScreen(
         routeTitle
     }
     // Top App Bar State
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = if (uiState.isLoading) {
+        TopAppBarDefaults.pinnedScrollBehavior()
+    } else {
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    }
 
     // Navigation state
     val actualNavigateUp: () -> Unit = if (selectedAppsCount > 0) {
@@ -112,28 +112,30 @@ fun SelectAppsScreen(
                 scrollBehavior = scrollBehavior,
                 navigateUp = actualNavigateUp,
                 actions = {
-                    IconButton(onClick = {showDropdownMenu = !showDropdownMenu }) {
-                        Icon(
-                            imageVector = Icons.Filled.MoreVert,
-                            contentDescription = stringResource(R.string.more_options)
-                        )
-                        DropdownMenu(
-                            expanded = showDropdownMenu,
-                            onDismissRequest = { showDropdownMenu = false },
-                            shape = RoundedCornerShape(16.dp),
-
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(text = systemAppsToggleText)},
-                                onClick = {
-                                    viewModel.showSystemApps()
-                                    coroutineScope.launch {
-                                        listState.scrollToItem(index = 0)
-                                    }
-                                    showDropdownMenu = false
-                                }
-
+                    if (!uiState.isLoading) {
+                        IconButton(onClick = { showDropdownMenu = !showDropdownMenu }) {
+                            Icon(
+                                imageVector = Icons.Filled.MoreVert,
+                                contentDescription = stringResource(R.string.more_options)
                             )
+                            DropdownMenu(
+                                expanded = showDropdownMenu,
+                                onDismissRequest = { showDropdownMenu = false },
+                                shape = RoundedCornerShape(16.dp),
+
+                                ) {
+                                DropdownMenuItem(
+                                    text = { Text(text = systemAppsToggleText) },
+                                    onClick = {
+                                        viewModel.showSystemApps()
+                                        coroutineScope.launch {
+                                            listState.scrollToItem(index = 0)
+                                        }
+                                        showDropdownMenu = false
+                                    }
+
+                                )
+                            }
                         }
                     }
                 }
@@ -153,22 +155,22 @@ fun SelectAppsScreen(
         }
     )
     { innerPadding ->
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(paddingGap),
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(paddingGap)
-        ) {
+        if (uiState.isLoading) {
+            LoadingScreen(modifier = Modifier.fillMaxSize())
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(paddingGap),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(paddingGap)
+            ) {
 //        Spacer(modifier = Modifier.height(paddingGap))
 //        Text(text = "Last Selected App: $lastSelectedApp")
 //            Text(
 //                text = "More Options",
 //                modifier = Modifier.align(Alignment.Start)
 //            )
-            if (uiState.isLoading) {
-                Text(text = "Please Wait...")
-            } else {
                 // Scroll to top when showSystemApps changes
                 LazyColumn(
                     state = listState,
@@ -190,8 +192,6 @@ fun SelectAppsScreen(
                     }
                 }
             }
-            // Aim for this to make the last app selectable, not busied by the FAB
-//            Spacer(modifier = Modifier.height(paddingGap))
         }
     }
 }
