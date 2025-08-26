@@ -10,13 +10,16 @@ import com.ryanbarillosofficial.appwipe.data.local.model.navigation.ScreenRoute
 import com.ryanbarillosofficial.appwipe.ui.page.home.HomeScreen
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.SelectAppsScreen
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.review.ReviewScreen
 
 @Composable
 fun AppWipeApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    windowSize: WindowSizeClass
 ) {
+
     NavHost(
         navController = navController,
         startDestination = ScreenRoute.Home.route,
@@ -54,10 +57,9 @@ fun AppWipeApp(
              * This is required to get a list of installed apps
              * and to uninstall apps
              */
-            val context = LocalContext.current
+//            val context = LocalContext.current
             SelectAppsScreen(
                 routeTitle = ScreenRoute.SelectApps.title,
-                context = context,
                 navigateUp = { navController.popBackStack() },
                 navigateForward = { navController.navigate(ScreenRoute.Review.route) }
             )

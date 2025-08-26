@@ -7,12 +7,18 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Check
@@ -28,9 +34,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,10 +48,12 @@ import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.R
 import com.ryanbarillosofficial.appwipe.data.local.model.application.ApplicationInfoWrapper
 import com.ryanbarillosofficial.appwipe.ui.components.AppWipeTopAppBar
+import com.ryanbarillosofficial.appwipe.ui.components.ConstrainedWidthLayout
 import com.ryanbarillosofficial.appwipe.ui.components.NAVIGATION_ANIMATION_DURATION_MILLIS
 import com.ryanbarillosofficial.appwipe.ui.components.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.review.components.ApplicationInfoList
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.review.components.ReviewAppsText
+import com.ryanbarillosofficial.appwipe.ui.page.select_apps.review.components.ReviewComposableNew
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.review.components.ReviewScreenType
 import kotlinx.coroutines.launch
 
@@ -188,22 +199,33 @@ fun ReviewComposable(
     innerPadding: PaddingValues,
     listState: LazyListState = rememberLazyListState()
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(paddingGap),
+    Log.d("ReviewComposableNew", "Icon: ${applicationList.first().icon}")
+    Box(
         modifier = Modifier
-            .fillMaxSize()
             .padding(innerPadding)
             .padding(paddingGap)
+//            .verticalScroll(rememberScrollState())
     ) {
-        ReviewAppsText(
-            title = title,
-            description = description
-        )
-        ApplicationInfoList(
-            applicationList = applicationList,
-            listState = listState,
-            modifier = Modifier.weight(1f)
-        )
+//        ReviewComposableNew(
+//            title = title,
+//            description = description,
+//            applicationList = applicationList,
+//            listState = listState
+//        )
+        ConstrainedWidthLayout {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(paddingGap)
+            ) {
+                ReviewAppsText(
+                    title = title,
+                    description = description
+                )
+                ApplicationInfoList(
+                    applicationList = applicationList,
+                    listState = listState
+                )
+            }
+        }
     }
 }

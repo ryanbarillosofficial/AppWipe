@@ -1,10 +1,12 @@
 package com.ryanbarillosofficial.appwipe.ui.page.select_apps.review.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ fun ReviewAppsText(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
         Text(
@@ -32,12 +35,12 @@ fun ReviewAppsText(
         )
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             HorizontalDivider(
                 thickness = 2.dp,
                 color = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.fillMaxWidth(0.5f)
+                modifier = Modifier.width(164.dp)
             )
         }
         Text(

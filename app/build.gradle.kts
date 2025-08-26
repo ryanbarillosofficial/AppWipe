@@ -69,6 +69,9 @@ dependencies {
     // Datastore Preferences
     implementation(libs.androidx.datastore.preferences)
 
+    // Window Sizes for adaptive layouts
+    implementation(libs.androidx.material3.window.size)
+
     // Everything else
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

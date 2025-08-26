@@ -1,10 +1,12 @@
 package com.ryanbarillosofficial.appwipe.ui.page.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,12 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ryanbarillosofficial.appwipe.ui.components.NavigationCardButton
 import com.ryanbarillosofficial.appwipe.data.local.model.navigation.ScreenRoute
 import com.ryanbarillosofficial.appwipe.ui.components.AppWipeTopAppBar
+import com.ryanbarillosofficial.appwipe.ui.components.ConstrainedWidthLayout
 import com.ryanbarillosofficial.appwipe.ui.components.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.home.components.HomeText
 import com.ryanbarillosofficial.appwipe.ui.theme.AppWipeTheme
@@ -58,33 +62,36 @@ fun HomeScreen(
             )
         }
     ) { innerPadding ->
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(paddingGap * 2),
-            modifier = Modifier
-                .fillMaxSize()
+        Box(
+            modifier = Modifier.verticalScroll(columnScrollState)
                 .padding(innerPadding)
                 .padding(paddingGap)
-                .verticalScroll(state = columnScrollState)
         ) {
-            HomeText(placeholderInt)
-            // Pick Apps Button
-            NavigationCardButton(
-                titleText = stringResource(R.string.select_apps_title),
-                descriptionText = stringResource(R.string.select_apps_description),
-                iconImageVector = Icons.Default.Add,
-                onClick = { navController.navigate(ScreenRoute.SelectApps.route) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            // View List Button
-            NavigationCardButton(
-                titleText = stringResource(R.string.view_list_title),
-                descriptionText = stringResource(R.string.view_list_description),
-                iconImageVector = Icons.AutoMirrored.Filled.ViewList,
+            ConstrainedWidthLayout {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(paddingGap * 2),
+                ) {
+                    HomeText(placeholderInt)
+                    // Pick Apps Button
+                    NavigationCardButton(
+                        titleText = stringResource(R.string.select_apps_title),
+                        descriptionText = stringResource(R.string.select_apps_description),
+                        iconImageVector = Icons.Default.Add,
+                        onClick = { navController.navigate(ScreenRoute.SelectApps.route) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    // View List Button
+                    NavigationCardButton(
+                        titleText = stringResource(R.string.view_list_title),
+                        descriptionText = stringResource(R.string.view_list_description),
+                        iconImageVector = Icons.AutoMirrored.Filled.ViewList,
 //                onClick = { navController.navigate(ScreenRoute.ViewList.route) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            NavigationCardButton(modifier = Modifier.fillMaxWidth())
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    NavigationCardButton(modifier = Modifier.fillMaxWidth())
+                }
+            }
         }
     }
 }

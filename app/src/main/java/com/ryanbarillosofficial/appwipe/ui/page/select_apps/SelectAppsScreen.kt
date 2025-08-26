@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,7 @@ import com.ryanbarillosofficial.appwipe.ui.components.paddingGap
 import com.ryanbarillosofficial.appwipe.ui.page.select_apps.components.ApplicationInfoCard
 import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ryanbarillosofficial.appwipe.ui.components.ConstrainedWidthLayout
 import com.ryanbarillosofficial.appwipe.ui.components.LoadingScreen
 
 /**
@@ -56,7 +58,6 @@ import com.ryanbarillosofficial.appwipe.ui.components.LoadingScreen
 @Composable
 fun SelectAppsScreen(
     @StringRes routeTitle: Int,
-    context: Context,
     viewModel: SelectAppsViewModel = hiltViewModel(),
     navigateForward: () -> Unit = { },
     navigateUp: () -> Unit = { },
@@ -155,40 +156,33 @@ fun SelectAppsScreen(
         }
     )
     { innerPadding ->
-        if (uiState.isLoading) {
-            LoadingScreen(modifier = Modifier.fillMaxSize())
-        } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(paddingGap),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(paddingGap)
-            ) {
-//        Spacer(modifier = Modifier.height(paddingGap))
-//        Text(text = "Last Selected App: $lastSelectedApp")
-//            Text(
-//                text = "More Options",
-//                modifier = Modifier.align(Alignment.Start)
-//            )
-                // Scroll to top when showSystemApps changes
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(paddingGap)
+        ) {
+            if (uiState.isLoading) {
+                LoadingScreen(modifier = Modifier.fillMaxSize())
+            } else {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .weight(1f),
+//                        .fillMaxWidth()
+//                        .clip(RoundedCornerShape(16.dp))
+                    ,
                     verticalArrangement = Arrangement.spacedBy(paddingGap)
                 ) {
                     items(items = uiState.installedApps) { applicationInfo ->
-                        ApplicationInfoCard(
-                            icon = applicationInfo.icon,
-                            label = applicationInfo.label,
-                            isSelected = applicationInfo.isSelected,
-                            onClick = {
-                                viewModel.selectApp(applicationInfo)
-                            }
-                        )
+                        ConstrainedWidthLayout {
+                            ApplicationInfoCard(
+                                icon = applicationInfo.icon,
+                                label = applicationInfo.label,
+                                isSelected = applicationInfo.isSelected,
+                                onClick = {
+                                    viewModel.selectApp(applicationInfo)
+                                }
+                            )
+                        }
                     }
                 }
             }

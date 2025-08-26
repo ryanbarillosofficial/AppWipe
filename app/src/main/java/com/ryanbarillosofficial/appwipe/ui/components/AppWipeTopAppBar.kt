@@ -55,7 +55,7 @@ fun AppWipeTopAppBar(
     // For LargeTopAppBar, the title often disappears/changes as it collapses, so switching
     // mid-way or based on when the large title area is mostly gone makes sense.
     val showCollapsedTitle by remember(scrollBehavior.state.collapsedFraction) {
-        derivedStateOf { scrollBehavior.state.collapsedFraction > 0.5f }
+        derivedStateOf { scrollBehavior.state.collapsedFraction > 0.65f }
     }
     // Log.e("showCollapsedTitle", "Status: $showCollapsedTitle")
 
